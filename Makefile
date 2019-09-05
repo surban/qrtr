@@ -18,6 +18,7 @@ endif
 SFLAGS := -I$(shell $(CC) -print-file-name=include) -Wno-non-pointer-null
 
 $(proj)-cfg-srcs := \
+	lib/msmipc_wrapper.c \
 	lib/logging.c \
 	src/addr.c \
 	src/cfg.c \
@@ -26,6 +27,7 @@ $(proj)-cfg-cflags := -Ilib
 
 $(proj)-ns-srcs := \
 	lib/logging.c \
+	lib/msmipc_wrapper.c \
 	src/addr.c \
 	src/ns.c \
 	src/map.c \
@@ -37,6 +39,7 @@ $(proj)-ns-cflags := -Ilib
 
 $(proj)-lookup-srcs := \
 	lib/logging.c \
+	lib/msmipc_wrapper.c \
 	src/lookup.c \
 	src/util.c \
 
@@ -44,6 +47,7 @@ $(proj)-lookup-cflags := -Ilib
 
 lib$(proj).so-srcs := \
 	lib/logging.c \
+	lib/msmipc_wrapper.c \
 	lib/qrtr.c \
 	lib/qmi.c
 
@@ -69,8 +73,8 @@ ifneq ($C,)
 	@sparse $< $(patsubst -iquote=%,-I%,$(CFLAGS)) $(SFLAGS)
 endif
 	@echo "CC	$<"
-	@$(CC) -MM -MF $(call src_to_dep,$<) -MP -MT "$@ $(call src_to_dep,$<)" $(CFLAGS) $(_CFLAGS) $<
-	@$(CC) -o $@ -c $< $(CFLAGS) $(_CFLAGS)
+	$(CC) -MM -MF $(call src_to_dep,$<) -MP -MT "$@ $(call src_to_dep,$<)" $(CFLAGS) $(_CFLAGS) $<
+	$(CC) -o $@ -c $< $(CFLAGS) $(_CFLAGS)
 
 define add-inc-target
 $(DESTDIR)$(includedir)/$2: $1/$2

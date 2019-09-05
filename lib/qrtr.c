@@ -18,9 +18,9 @@ static int qrtr_getname(int sock, struct sockaddr_qrtr *sq)
 	socklen_t sl = sizeof(*sq);
 	int rc;
 
-	rc = getsockname(sock, (void *)sq, &sl);
+	rc = getsockname_qrtr(sock, (void *)sq, &sl);
 	if (rc) {
-		PLOGE("getsockname()");
+		PLOGE("getsockname_qrtr()");
 		return -1;
 	}
 
@@ -36,9 +36,9 @@ int qrtr_open(int rport)
 	int sock;
 	int rc;
 
-	sock = socket(AF_QIPCRTR, SOCK_DGRAM, 0);
+	sock = socket_qrtr(AF_QIPCRTR, SOCK_DGRAM, 0);
 	if (sock < 0) {
-		PLOGE("socket(AF_QIPCRTR)");
+		PLOGE("socket_qrtr(AF_QIPCRTR)");
 		return -1;
 	}
 
@@ -58,9 +58,9 @@ int qrtr_open(int rport)
 		sq.sq_node = 1;
 		sq.sq_port = rport;
 
-		rc = bind(sock, (void *)&sq, sizeof(sq));
+		rc = bind_qrtr(sock, (void *)&sq, sizeof(sq));
 		if (rc < 0) {
-			PLOGE("bind(%d)", rport);
+			PLOGE("bind_qrtr(%d)", rport);
 			goto err;
 		}
 	}
@@ -85,9 +85,9 @@ int qrtr_sendto(int sock, uint32_t node, uint32_t port, const void *data, unsign
 	sq.sq_node = node;
 	sq.sq_port = port;
 
-	rc = sendto(sock, data, sz, 0, (void *)&sq, sizeof(sq));
+	rc = sendto_qrtr(sock, data, sz, 0, (void *)&sq, sizeof(sq));
 	if (rc < 0) {
-		PLOGE("sendto()");
+		PLOGE("sendto_qrtr()");
 		return -1;
 	}
 
@@ -204,9 +204,9 @@ int qrtr_recvfrom(int sock, void *buf, unsigned int bsz, uint32_t *node, uint32_
 	int rc;
 
 	sl = sizeof(sq);
-	rc = recvfrom(sock, buf, bsz, 0, (void *)&sq, &sl);
+	rc = recvfrom_qrtr(sock, buf, bsz, 0, (void *)&sq, &sl);
 	if (rc < 0) {
-		PLOGE("recvfrom()");
+		PLOGE("recvfrom_qrtr()");
 		return rc;
 	}
 	if (node)

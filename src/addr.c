@@ -30,20 +30,20 @@ void qrtr_set_address(uint32_t addr)
 	int ret;
 
 	/* Trigger loading of the qrtr kernel module */
-	sock = socket(AF_QIPCRTR, SOCK_DGRAM, 0);
+	sock = socket_qrtr(AF_QIPCRTR, SOCK_DGRAM, 0);
 	if (sock < 0)
 		PLOGE_AND_EXIT("failed to create AF_QIPCRTR socket");
 
-	ret = getsockname(sock, (void*)&sq, &sl);
+	ret = getsockname_qrtr(sock, (void*)&sq, &sl);
 	if (ret < 0)
-		PLOGE_AND_EXIT("getsockname()");
+		PLOGE_AND_EXIT("getsockname_qrtr()");
 	close(sock);
 
 	/* Skip configuring the address, if it's same as current */
 	if (sl == sizeof(sq) && sq.sq_node == addr)
 		return;
 
-	sock = socket(AF_NETLINK, SOCK_DGRAM, NETLINK_ROUTE);
+	sock = socket_qrtr(AF_NETLINK, SOCK_DGRAM, NETLINK_ROUTE);
 	if (sock < 0)
 		PLOGE_AND_EXIT("failed to create netlink socket");
 

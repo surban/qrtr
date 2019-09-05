@@ -160,13 +160,13 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
-	sock = socket(AF_QIPCRTR, SOCK_DGRAM, 0);
+	sock = socket_qrtr(AF_QIPCRTR, SOCK_DGRAM, 0);
 	if (sock < 0)
 		PLOGE_AND_EXIT("sock(AF_QIPCRTR)");
 
-	rc = getsockname(sock, (void *)&sq, &sl);
+	rc = getsockname_qrtr(sock, (void *)&sq, &sl);
 	if (rc || sq.sq_family != AF_QIPCRTR || sl != sizeof(sq))
-		PLOGE_AND_EXIT("getsockname()");
+		PLOGE_AND_EXIT("getsockname_qrtr()");
 
 	sq.sq_port = QRTR_PORT_CTRL;
 
@@ -179,9 +179,9 @@ int main(int argc, char **argv)
 	if (rc)
 		PLOGE_AND_EXIT("setsockopt(SO_RCVTIMEO)");
 
-	rc = sendto(sock, &pkt, sizeof(pkt), 0, (void *)&sq, sizeof(sq));
+	rc = sendto_qrtr(sock, &pkt, sizeof(pkt), 0, (void *)&sq, sizeof(sq));
 	if (rc < 0)
-		PLOGE_AND_EXIT("sendto()");
+		PLOGE_AND_EXIT("sendto_qrtr()");
 
 	printf("  Service Version Instance Node  Port\n");
 
